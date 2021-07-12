@@ -1,13 +1,25 @@
 import './App.css';
-
-const initialData = [
-  { id: 1, value: 'Buy milk', isDone: false },
-  { id: 2, value: 'Walking a turtle', isDone: false },
-  { id: 3, value: 'Read an interesting book', isDone: false },
-  { id: 4, value: 'Go to pool', isDone: true },
-]
+import { useDispatch, useSelector } from 'react-redux';
+import { addListItem, checkListItem, selector, setActiveOnly } from './store/slice';
 
 const App = () => {
+  const dispatch = useDispatch()
+  const {isActiveOnly, list} = useSelector(selector)
+
+  const handleOnAddItem = () => {
+    const newValue = prompt('new')
+
+    dispatch(addListItem(newValue))
+  }
+
+  const handleOnCheckItem = id => {
+    dispatch(checkListItem(id))
+  }
+
+  const handleOnSetActiveOnly = () => {
+    dispatch(setActiveOnly())
+  }
+
   const isStrikeThrough = isTrue => isTrue ? ({
     textDecoration: 'line-through',
     fontStyle: 'italic'
@@ -16,22 +28,25 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <button className="App-header-button">
+        <button className="App-header-button" onClick={handleOnAddItem}>
           +
         </button>
         <div>
           <input
             type="checkbox"
-            checked={false}/>
+            checked={isActiveOnly}
+            onClick={handleOnSetActiveOnly}
+          />
           <span>Active only</span>
         </div>
       </header>
       <main className="App-list">
-        {initialData.map(({ id, value, isDone }) => (
+        {list.map(({ id, value, isDone }) => (
           <div
             key={id}
             className="App-list-item"
             style={isStrikeThrough(isDone)}
+            onClick={() => handleOnCheckItem(id)}
           >
             {value}
           </div>
